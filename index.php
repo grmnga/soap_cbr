@@ -1,16 +1,26 @@
 <?php
-// Использование Web-сервиса
-// "Currency Exchange Rate" от xmethods.com
+//curs_soap.php
+    $client = new SoapClient("http://www.cbr.ru/dailyinfowebserv/dailyinfo.asmx?wsdl");
+    try 
+    {
+        $current_date = date('d/m/Y');
+        $current_date_yandex = date('Y-m-d', strtotime(date('Y-m-d')) + 24*60*60);
+        $param["On_date"] = $current_date_yandex;
 
-// Создание SOAP-клиента по WSDL-документу
-//$client = new SoapClient("http://speller.yandex.net/services/spellservice?WSDL");
+        $res = $client->GetCursOnDate($param);
 
-$client = new SoapClient("yandex.wsdl");
+        $xml = new SimpleXMLElement($res->GetCursOnDateResult->any);
 
-// Поcылка SOAP-запроса и получение результата
-$result = $client->checkTexts('мошина');
+        foreach ($xml->ValuteData[0] as $curs_item) 
+        {
+            $b = json_decode(json_encode($curs_item));
+            echo "Обозначение: " . $b->VchCode . " Название: " . $b->Vname . " Номинал: " . $b->Vnom . " Курс: " . $b->Vcurs . "<br>";
+        }
 
-echo 'Текущий курс доллара: ', $result, ' рублей';
-var_dump
-    
+    } 
+    catch (SoapFault $e)
+    {
+      echo 'Операция '.$e->faultcode.' вернула ошибку: '.$e->getMessage();
+    }
+
 ?>
