@@ -3,19 +3,43 @@
     $client = new SoapClient("http://www.cbr.ru/dailyinfowebserv/dailyinfo.asmx?wsdl");
     try 
     {
-        $current_date = date('d/m/Y');
-        $current_date_yandex = date('Y-m-d', strtotime(date('Y-m-d')) + 24*60*60);
-        $param["On_date"] = $current_date_yandex;
+        $current_date = date('Y-m-d');
+        
+        //echo "current_date: ", $current_date, "</br>";
+        
+        $param["On_date"] = $current_date;
 
         $res = $client->GetCursOnDate($param);
 
         $xml = new SimpleXMLElement($res->GetCursOnDateResult->any);
+        
+        //var_dump($xml);
 
+        
+        /*foreach ($xml->ValuteData[0] as $curs_item) 
+        {
+            echo "Обозначение: " . $curs_item->VchCode . " Название: " . $curs_item->Vname . " Номинал: " . $curs_item->Vnom . " Курс: " . $curs_item->Vcurs . "</br>";
+        }*/
+        
+        echo "<table border=1>
+                <tr>
+                    <th>Обозначение</th>
+                    <th>Название</th>
+                    <th>Номинал</th>
+                    <th>Курс</th>
+                </tr>";
+        
         foreach ($xml->ValuteData[0] as $curs_item) 
         {
-            $b = json_decode(json_encode($curs_item));
-            echo "Обозначение: " . $b->VchCode . " Название: " . $b->Vname . " Номинал: " . $b->Vnom . " Курс: " . $b->Vcurs . "<br>";
+           echo "<tr>
+                   <td>$curs_item->VchCode</td>
+                   <td>$curs_item->Vname</td>
+                   <td>$curs_item->Vnom</td>
+                   <td>$curs_item->Vcurs</td>
+                </tr>";
         }
+        
+        echo "</table>";
 
     } 
     catch (SoapFault $e)
@@ -24,3 +48,5 @@
     }
 
 ?>
+
+
