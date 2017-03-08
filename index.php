@@ -1,9 +1,19 @@
 <?php
 //curs_soap.php
     $client = new SoapClient("http://www.cbr.ru/dailyinfowebserv/dailyinfo.asmx?wsdl");
+    var_dump($client->__getFunctions());
+    $arr = $client->__getFunctions();
+
+    foreach($arr as $a)
+{        echo var_dump($a);
+        echo "</br>";}
+
+    echo "</br></br>";
+
     try 
     {
         $current_date = date('Y-m-d');
+        
         
         //echo "current_date: ", $current_date, "</br>";
         
@@ -12,8 +22,8 @@
         $res = $client->GetCursOnDate($param);
 
         $xml = new SimpleXMLElement($res->GetCursOnDateResult->any);
-        
-        //var_dump($xml);
+        echo "</br></br>!!!!!!!!!!!!!!!!!!!!!!!!!</br>";
+        var_dump($xml);
 
         
         /*foreach ($xml->ValuteData[0] as $curs_item) 
